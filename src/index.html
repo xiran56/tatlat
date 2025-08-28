@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Транслитератор татарского языка</title>
+</head>
+<body>
+    <header>
+        <h1>Транслитератор татарского языка</h1>
+        <p>Транслитерация с кириллицы на латиницу Zamanalif 2012 с вариантами</p>
+    </header>
+    
+    <div class="card">
+        <textarea id="inputText" placeholder="Текст на кириллице"></textarea>
+        <div class="options">
+            <div class="option-item">
+                <input type="checkbox" id="optJanalifA" checked>
+                <label for="optJanalifA">Әә как лат. Əə (по-умолчанию Ää)</label>
+            </div>
+            <div class="option-item">
+                <input type="checkbox" id="optTraditionalYa" checked>
+                <label for="optTraditionalYa">Яя после согласных как Ââ</label>
+            </div>
+            <div class="option-item">
+                <input type="checkbox" id="optZamanalifIa" checked>
+                <label for="optZamanalifIa">Дифтонги ия, ие, ию как iä/iə, ie, iü</label>
+            </div>
+            <div class="option-item">
+                <input type="checkbox" id="optInitalGaFix" checked>
+                <label for="optInitalGaFix">Испр. написания типа кадәр -> qədər</label>
+            </div>
+            <div class="option-item">
+                <input type="checkbox" id="optIotatedUppercaseFix" checked>
+                <label for="optIotatedUppercaseFix">Корректная транслитерация йотированных гласных в верхнем регистре</label>
+            </div>
+        </div>
+        
+        <button id="transliterateBtn">Транслитерировать</button>
+        
+        <h3>Текст на латинице</h3>
+        <textarea id="outputText" readonly></textarea>
+    </div>
+    
+    <div class="card">
+        <div class="rules-header" id="rulesToggle">
+            <span class="arrow">▶</span>
+            <h3>Правила транслитерации</h3>
+        </div>
+        <div class="rules-content" id="rulesContent">
+            <p><a href="https://ru.wikipedia.org/wiki/Татарская_письменность" target="_blank">Упрощенная таблица соответствия для понимания</a></p>
+            <p>Перед транслитерацией слово нормализуется, е в нейотированном положении заменяется на э, а йотированные гласные в йотированном положении "раскрываются" в зависимости от типа слова.</p>
+            <p>Если в слове есть нейотированные гласные переднего ряда или ьЬ, то слово "мягкое", в остальных случаях "твердое".</p>
+            <p>Например, яшь -> йәш, егет -> йэгэт, но ел -> йыл.</p>
+            <p>Дифтонги ау, әү транслитерируются как aw, äw/əw.</p>
+            <p>Буквы г/к перед заднеязычными или ъЪ транслитерируются как ğ/q, перед переднеязычными как g/k, если стоит перед согласной или на конце слова, то сначала после нее ищется ближайшая гласная или в этом слове, по ее типу определяется написание, если гласных после буквы г/к нет, то ищутся гласные перед ними. По-умолчанию транслитеруются как ğ/q.</p>
+            <p>Если после гласной заднего ряда стоит ь, то она транслитеруются как ее переднеязычный эквивалент, например: сәгать -> säğät/səğət.</p>
+            <p>ьЬ, ъЪ в транслитерацию сами по себе не попадают, но перед согласными и нейотированными гласными, они как правило обозначают хамзу.</p>
+            <p>Хамзу после гласных может обозначать и буква э (напр. маэмай), таким образом Ээ после гласных, а Ьь, Ъъ после гласных и перед нейотированными гласными и согласными всегда транслитеруются как ' (знак хамзы).</p>
+        </div>
+    </div>
+    
+    <footer>
+        <p>Транслитератор татарского языка © 2025</p>
+    </footer>
+
+    <script src="index.js"></script>
+</body>
+</html>

@@ -201,6 +201,36 @@ function transliterate_gk(cyr: string, pos: number): string {
     return GK_CONV[cyr[pos]][word_type]
 }
 
+const IY_CONV_TABLE: ConvTable = {
+    'ы': 'и',
+    'Ы': 'И'
+}
+
+// Для слов типа Сагыйть -> saghit
+function is_gk_iy_like(cyr: string, pos: number): boolean {
+    if (!(cyr[pos] in IY_CONV_TABLE))
+        return false
+
+    if (pos < cyr.length - 4 || pos == 0)
+        return false
+
+    if (cyr[pos + 1] != "й" && cyr[pos + 1] != "Й")
+        return false
+
+    return SOFT_MARK.includes(cyr[pos + 3])
+}
+
+function is_saghat_like(cyr: string, pos: number): boolean {
+    if (pos < cyr.length - 3 || pos == 0)
+        return false
+
+    return SOFT_MARK.includes(cyr[pos + 2])
+}
+
+function is_qadar_like(cyr: string, pos: number): boolean {
+    return word_type_by_pos(cyr, pos + 1) == SOFT_WORD 
+}
+
 function transliterate_cyrillic(
     cyrillic: string, 
     optJanalifA: boolean,
@@ -211,15 +241,10 @@ function transliterate_cyrillic(
 ): string {
     let normalized: string = normalize_cyrillic(cyrillic)
 
-    if (optJanalifA) {
-        BASIC_TRANSLIT_TABLE['ә'] = 'ə'
-        BASIC_TRANSLIT_TABLE['Ә'] = 'Ə'
-    }
-
-    if (!optTraditionalYa) {
-        BASIC_TRANSLIT_TABLE['я'] = BASIC_TRANSLIT_TABLE['ә']
-        BASIC_TRANSLIT_TABLE['Я'] = BASIC_TRANSLIT_TABLE['Ә']
-    }
+    BASIC_TRANSLIT_TABLE['ә'] = optJanalifA ? 'ə' : 'ä'
+    BASIC_TRANSLIT_TABLE['Ә'] = optJanalifA ? 'Ə' : 'Ä'
+    BASIC_TRANSLIT_TABLE['я'] = optTraditionalYa ? 'â' : BASIC_TRANSLIT_TABLE['ә']
+    BASIC_TRANSLIT_TABLE['Я'] = optTraditionalYa ? 'Â' : BASIC_TRANSLIT_TABLE['Ә']
 
     let skip: boolean = false
     let result: string = ""
@@ -240,11 +265,13 @@ function transliterate_cyrillic(
 
         if (corresponds_aw_like(normalized, i)) {
             result += transliterate_aw_like(normalized, i)
+            skip = true
             continue
         }
 
         if (optZamanalifIa && corresponds_ie_like(normalized, i)) {
             result += transliterate_ie_like(normalized, i)
+            skip = true
             continue
         }
 
@@ -253,7 +280,19 @@ function transliterate_cyrillic(
             continue
         }
 
-        result += normalized[i]
+        if (HARD_VOWELS.includes(normalized[i]) && i != 0 && normalized[i] in GK_CONV) {
+            if (is_gk_iy_like(normalized, i) || (optInitalGaFix && is_qadar_like(normalized, i))) {
+                result += IY_CONV_TABLE[normalized[i]]
+                skip = true
+            }
+            else if (is_saghat_like(normalized, i) || (optInitalGaFix && is_qadar_like(normalized, i))) {
+                result += SOFT_VOWELS[HARD_VOWELS.indexOf(normalized[i])]
+            }
+
+            continue
+        }
+
+
     }
 
     return result
