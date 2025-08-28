@@ -13,7 +13,7 @@ document.getElementById('transliterateBtn').addEventListener('click', function()
     const getOpt = (n) => document.getElementById(n).checked;
 
     const inputText = document.getElementById('inputText').value;
-    const outputText = translit(inputText, getOpt('optJanalifA'), getOpt('optTraditionalYa'), getOpt('optZamanalifIa'), getOpt('optInitalGaFix'), getOpt('optIotatedUppercaseFix'));
+    const outputText = transliterate_cyrillic(inputText, getOpt('optJanalifA'), getOpt('optTraditionalYa'), getOpt('optZamanalifIa'), getOpt('optInitalGaFix'), getOpt('optIotatedUppercaseFix'));
 
     document.getElementById('outputText').value = outputText;
 });
@@ -242,7 +242,7 @@ function transliterate_cyrillic(cyrillic, optJanalifA, optTraditionalYa, optZama
            continue;
        }
 
-        result += BASIC_TRANSLIT_TABLE[normalized[i]];
+        result += normalized[i];
     }
     return result;
 }
