@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <style>
+:root {
+    --bg-color: #121212;
+    --card-bg: #1e1e1e;
+    --text-color: #e0e0e0;
+    --accent-color: #027000;
+    --border-color: #333;
+    --success-color: #27ae60;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    padding: 20px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+h1 {
+    color: var(--accent-color);
+    margin-bottom: 10px;
+}
+
+.card {
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+textarea {
+    width: 100%;
+    min-height: 150px;
+    background-color: #2d2d2d;
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 12px;
+    resize: vertical;
+    margin-bottom: 15px;
+    font-size: 16px;
+}
+
+button {
+    background-color: var(--accent-color);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background-color 0.3s;
+    display: block;
+    width: 100%;
+}
+
+button:hover {
+    background-color: #06a603;
+}
+
+.options {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.option-item {
+    display: flex;
+    align-items: center;
+}
+
+.option-item input {
+    margin-right: 10px;
+}
+
+.rules-header {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+}
+
+.rules-header h3 {
+    margin-left: 10px;
+}
+
+.rules-content {
+    display: none;
+    margin-top: 15px;
+    padding: 15px;
+    background-color: #252525;
+    border-radius: 4px;
+}
+
+.rules-content.show {
+    display: block;
+}
+
+.arrow {
+    transition: transform 0.3s;
+}
+
+.arrow.rotated {
+    transform: rotate(90deg);
+}
+
+footer {
+    text-align: center;
+    margin-top: 30px;
+    color: #888;
+    font-size: 14px;
+}
+
+@media (max-width: 600px) {
+    .options {
+        grid-template-columns: 1fr;
+    }
+}
+    </style>
+    <title>Транслитератор татарского языка</title>
+</head>
+<body>
+    <header>
+        <h1>Транслитератор татарского языка</h1>
+        <p>Транслитерация с кириллицы на латиницу Zamanalif 2012 с вариантами</p>
+    </header>
+    
+    <div class="card">
+        <textarea id="inputText" placeholder="Текст на кириллице"></textarea>
+        <div class="options">
+            <div class="option-item">
+                <input type="checkbox" id="optJanalifA" checked="checked">
+                <label for="optJanalifA">Әә как лат. Əə (по-умолчанию Ää)</label>
+            </div>
+            <div class="option-item">
+                <input type="checkbox" id="optTraditionalYa" checked="checked">
+                <label for="optTraditionalYa">Яя после согласных как Ââ</label>
+            </div>
+            <div class="option-item">
+                <input type="checkbox" id="optZamanalifIa" checked="checked">
+                <label for="optZamanalifIa">Дифтонги ия, ие, ию как iä/iə, ie, iü</label>
+            </div>
+            <div class="option-item">
+                <input type="checkbox" id="optInitalGaFix" checked="checked">
+                <label for="optInitalGaFix">Испр. написания типа кадәр -> qədər</label>
+            </div>
+            <div class="option-item">
+                <input type="checkbox" id="optIotatedUppercaseFix" checked="checked">
+                <label for="optIotatedUppercaseFix">Корректная транслитерация йотированных гласных в верхнем регистре</label>
+            </div>
+        </div>
+        
+        <button id="transliterateBtn">Транслитерировать</button>
+        
+        <h3>Текст на латинице</h3>
+        <textarea id="outputText" readonly="readonly"></textarea>
+    </div>
+    
+    <div class="card">
+        <div class="rules-header" id="rulesToggle">
+            <span class="arrow">▶</span>
+            <h3>Правила транслитерации</h3>
+        </div>
+        <div class="rules-content" id="rulesContent">
+            <p><a href="https://ru.wikipedia.org/wiki/Татарская_письменность" target="_blank">Упрощенная таблица соответствия для понимания</a></p>
+            <p>Перед транслитерацией слово нормализуется, е в нейотированном положении заменяется на э, а йотированные гласные в йотированном положении "раскрываются" в зависимости от типа слова.</p>
+            <p>Если в слове есть нейотированные гласные переднего ряда или ьЬ, то слово "мягкое", в остальных случаях "твердое".</p>
+            <p>Например, яшь -> йәш, егет -> йэгэт, но ел -> йыл.</p>
+            <p>Дифтонги ау, әү транслитерируются как aw, äw/əw.</p>
+            <p>Буквы г/к перед заднеязычными или ъЪ транслитерируются как ğ/q, перед переднеязычными как g/k, если стоит перед согласной или на конце слова, то сначала после нее ищется ближайшая гласная или в этом слове, по ее типу определяется написание, если гласных после буквы г/к нет, то ищутся гласные перед ними. По-умолчанию транслитеруются как ğ/q.</p>
+            <p>Если после гласной заднего ряда стоит ь, то она транслитеруются как ее переднеязычный эквивалент, например: сәгать -> säğät/səğət.</p>
+            <p>ьЬ, ъЪ в транслитерацию сами по себе не попадают, но перед согласными и нейотированными гласными, они как правило обозначают хамзу.</p>
+            <p>Хамзу после гласных может обозначать и буква э (напр. маэмай), таким образом Ээ после гласных, а Ьь, Ъъ после гласных и перед нейотированными гласными и согласными всегда транслитеруются как ' (знак хамзы).</p>
+        </div>
+    </div>
+    
+    <footer>
+        <p>Транслитератор татарского языка © 2025</p>
+    </footer>
+
+    <script src="index.js"></script>
+</body>
+</html>
